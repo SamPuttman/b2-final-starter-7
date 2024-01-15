@@ -1,0 +1,16 @@
+<%= form_with model: [@merchant, @coupon], local: true do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
+
+  <%= form.label :code %>
+  <%= form.text_field :code %>
+
+  <%= form.label :discount_value %>
+  <%= form.number_field :discount_value, min: 0 %>
+
+  <%= form.label :discount_type %>
+  <%= form.select :discount_type, Coupon.discount_types.keys %>
+
+  <%= form.submit "Submit" %>
+<% end %>
+
