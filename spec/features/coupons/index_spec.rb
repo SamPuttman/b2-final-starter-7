@@ -13,7 +13,7 @@ RSpec.describe Coupon do
       expect(Coupon.exists?(@coupon2.id)).to be true
 
       visit merchant_coupons_path(@merchant)
-      save_and_open_page
+
       expect(page).to have_content("10OFF")
       expect(page).to have_content("20OFF")
     end
