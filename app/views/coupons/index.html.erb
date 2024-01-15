@@ -1,0 +1,8 @@
+
+<h1>My Coupons</h1>
+
+<% @coupons.each do |coupon| %>
+  <p>
+    <%= link_to coupon.name, merchant_coupon_path(@merchant, coupon) %> 
+  </p>
+<% end %>
