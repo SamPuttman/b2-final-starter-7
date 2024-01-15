@@ -1,5 +1,11 @@
 <%= render partial: "shared/nav" %>
 
+<% if @coupon.active? %>
+  <%= button_to 'Deactivate Coupon', [@merchant, @coupon], method: :patch, action: :update %>
+<% else %>
+  <%= button_to 'Activate Coupon', [@merchant, @coupon], method: :patch, action: :update %>
+<% end %>
+
 <p>Name: <%= @coupon.name %></p>
 <p>Code: <%= @coupon.code %></p>
 <p>Discount: <%= @coupon.discount_value %></p>

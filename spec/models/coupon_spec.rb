@@ -20,4 +20,25 @@ RSpec.describe Coupon, type: :model do
       expect(new_coupon.errors[:base]).to include("Coupon limit reached. You can have a maximum of 5 coupons at a time.")
     end
   end
+
+  describe "update coupon status" do
+    it "toggles the status from active to inactive" do
+      @merchant = Merchant.create!(name: "J-Mart")
+      @coupon = Coupon.create!(name: "10OFF", code: "CODE10", discount_value: 10, discount_type: "Percent Off", merchant: @merchant)
+
+      expect(@coupon.active?).to be true
+      @coupon.update_status
+      expect(@coupon.inactive?).to be true
+    end
+
+    it "toggles the status from inactive to active" do
+      @merchant = Merchant.create!(name: "J-Mart")
+      @coupon = Coupon.create!(name: "10OFF", code: "CODE10", discount_value: 10, discount_type: "Percent Off", merchant: @merchant, status: "inactive")
+
+      expect(@coupon.inactive?).to be true
+      @coupon.update_status
+      expect(@coupon.active?).to be true
+    end
+
+  end
 end

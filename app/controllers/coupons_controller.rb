@@ -26,6 +26,17 @@ class CouponsController < ApplicationController
     @coupon = @merchant.coupons.find(params[:id])
   end
 
+  def update
+    @merchant = Merchant.find(params[:merchant_id])
+    @coupon = @merchant.coupons.find(params[:id])
+
+    if @coupon.update_status
+      redirect_to merchant_coupon_path(@merchant, @coupon)
+    else
+      redirect_to merchant_coupon_path(@merchant, @coupon)
+    end
+  end
+
   private
 
   def coupon_params
