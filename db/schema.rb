@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_15_215901) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_15_222354) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_15_215901) do
     t.bigint "merchant_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
     t.index ["code", "merchant_id"], name: "index_coupons_on_code_and_merchant_id", unique: true
     t.index ["merchant_id"], name: "index_coupons_on_merchant_id"
   end
@@ -84,6 +85,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_15_215901) do
     t.bigint "invoice_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coupon_id"
+    t.index ["coupon_id"], name: "index_transactions_on_coupon_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
   end
 
@@ -92,5 +95,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_15_215901) do
   add_foreign_key "invoice_items", "items"
   add_foreign_key "invoices", "coupons"
   add_foreign_key "items", "merchants"
+  add_foreign_key "transactions", "coupons"
   add_foreign_key "transactions", "invoices"
 end
