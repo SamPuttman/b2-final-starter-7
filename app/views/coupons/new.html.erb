@@ -1,3 +1,5 @@
+<%= render partial: "shared/nav" %>
+
 <%= form_with model: [@merchant, @coupon], local: true do |form| %>
   <%= form.label :name %>
   <%= form.text_field :name %>
