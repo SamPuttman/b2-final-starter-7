@@ -1,6 +1,7 @@
 class Coupon < ApplicationRecord
   belongs_to :merchant
   has_many :invoices
+  has_many :transactions
 
   validates :name, presence: true
   validates :code, presence: true, uniqueness: { scope: :merchant_id }
@@ -8,9 +9,8 @@ class Coupon < ApplicationRecord
   validates :discount_type, presence: true
   validate :coupon_limit_validation, on: :create
 
-  enum discount_type: { percent_off: 0, dollar_off: 1 }
-
-  private 
+  enum discount_type: { percent_off: "Percent Off", dollar_off: "Dollars Off"}
+  enum status: { Active: 0, Inactive: 1 }
 
   #https://api.rubyonrails.org/v7.1.2/classes/ActiveModel/Errors.html
 
@@ -18,5 +18,9 @@ class Coupon < ApplicationRecord
     if merchant && merchant.coupons.count >= 5
       errors.add(:base, "Coupon limit reached. You can have a maximum of 5 coupons at a time.")
     end
+  end
+
+  def usage_count
+    transactions.count
   end
 end

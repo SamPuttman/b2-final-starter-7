@@ -2,10 +2,10 @@ RSpec.describe Coupon do
   describe "create" do
     before do
       @merchant = Merchant.create!(name: "J-Mart")
-      @coupon1 = Coupon.create!(name: "10OFF", code: "CODE10", discount_value: 10.0, discount_type: 0, merchant: @merchant)
-      @coupon2 = Coupon.create!(name: "20OFF", code: "CODE20", discount_value: 20.00, discount_type: 0, merchant: @merchant)
-      @coupon3 = Coupon.create!(name: "30OFF", code: "CODE30", discount_value: 30.00, discount_type: 1, merchant: @merchant)
-      @coupon4 = Coupon.create!(name: "40OFF", code: "CODE40", discount_value: 40.00, discount_type: 1, merchant: @merchant)
+      @coupon1 = Coupon.create!(name: "10OFF", code: "CODE10", discount_value: 10, discount_type: "Percent Off", merchant: @merchant)
+      @coupon2 = Coupon.create!(name: "20OFF", code: "CODE20", discount_value: 20, discount_type: "Percent Off", merchant: @merchant)
+      @coupon3 = Coupon.create!(name: "30OFF", code: "CODE30", discount_value: 30, discount_type: "Dollars Off", merchant: @merchant)
+      @coupon4 = Coupon.create!(name: "40OFF", code: "CODE40", discount_value: 40, discount_type: "Dollars Off", merchant: @merchant)
     end
 
     it "allows a merchant to create a coupon" do
@@ -25,7 +25,7 @@ RSpec.describe Coupon do
     end
 
     it "won't let a merchant make more than 5 coupons" do
-      @coupon5 = Coupon.create!(name: "50OFF", code: "CODE50", discount_value: 50.00, discount_type: 1, merchant: @merchant)
+      @coupon5 = Coupon.create!(name: "50OFF", code: "CODE50", discount_value: 50, discount_type: "Dollars Off", merchant: @merchant)
 
       visit merchant_coupons_path(@merchant)
       click_link "Create New Coupon"
