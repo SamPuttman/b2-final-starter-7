@@ -10,7 +10,7 @@ class Coupon < ApplicationRecord
   validate :coupon_limit_validation, on: :create
 
   enum discount_type: { percent_off: "Percent Off", dollar_off: "Dollars Off"}
-  enum status: { Active: 0, Inactive: 1 }
+  enum status: { active: 0, inactive: 1 }
 
   #https://api.rubyonrails.org/v7.1.2/classes/ActiveModel/Errors.html
 
@@ -23,4 +23,24 @@ class Coupon < ApplicationRecord
   def usage_count
     transactions.count
   end
+
+  def update_status
+    if active? && cannot_deactivate_due_to_pending_invoice?
+      return false
+    else
+      if active?
+        self.status = :inactive
+      else
+        self.status = :active
+      end
+      save
+    end
+  end
+
+  private
+
+  def cannot_deactivate_due_to_pending_invoice?
+    invoices.in_progress.exists?
+  end
+
 end
