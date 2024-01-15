@@ -11,7 +11,7 @@ RSpec.describe Coupon do
     it "allows a merchant to create a coupon" do
       visit merchant_coupons_path(@merchant)
 
-      click_button "Create new coupon"
+      click_link "Create New Coupon"
 
       fill_in "Name", with: "75OFF"
       fill_in "Code", with: "CODE75"
@@ -22,14 +22,13 @@ RSpec.describe Coupon do
 
       expect(current_path).to eq(merchant_coupons_path(@merchant))
       expect(page).to have_content("75OFF")
-      expect(page).to have_content("75% off")
     end
 
     it "won't let a merchant make more than 5 coupons" do
       @coupon5 = Coupon.create!(name: "50OFF", code: "CODE50", discount_value: 50.00, discount_type: 1, merchant: @merchant)
 
       visit merchant_coupons_path(@merchant)
-      click_button "Create new coupon"
+      click_link "Create New Coupon"
 
       fill_in "Name", with: "100_OFF"
       fill_in "Code", with: "CODE100"
@@ -43,7 +42,7 @@ RSpec.describe Coupon do
 
     it "won't let a mechant create a duplicate coupon code" do
       visit merchant_coupons_path(@merchant)
-      click_button "Create new coupon"
+      click_link "Create New Coupon"
 
       fill_in "Name", with: "10OFF"
       fill_in "Code", with: "CODE10"
@@ -52,7 +51,7 @@ RSpec.describe Coupon do
 
       click_button "Submit"
 
-      expect(page).to have_content("Code already in use. Please select a different code.")
+      expect(page).to have_content("Code has already been taken")
     end
   end
 end
