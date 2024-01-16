@@ -115,4 +115,14 @@ RSpec.describe "invoices show" do
     visit merchant_invoice_path(@merchant1, @invoice_1)
     expect(page).to have_content("Grand Total: #{@invoice_1.grand_total}")
   end
+
+  it "displays the coupon name as a link" do
+    @coupon = Coupon.create!(name: "10 Dollars Off", code: "10FF", discount_value: 10, discount_type: "dollar_off", merchant_id: @merchant1.id)
+    @invoice_1.update(coupon: @coupon)
+
+    @invoice_1.reload
+
+    visit merchant_invoice_path(@merchant1, @invoice_1)
+    expect(page).to have_link("#{@coupon.name}")
+  end
 end
