@@ -100,4 +100,19 @@ RSpec.describe "invoices show" do
     end
   end
 
+  it "shows the subtotal" do
+    visit merchant_invoice_path(@merchant1, @invoice_1)
+
+    expect(page).to have_content("Subtotal: #{@invoice_1.total_revenue}")
+  end
+
+  it "shows the grand total" do
+    @coupon = Coupon.create!(name: "10 Dollars Off", code: "10FF", discount_value: 10, discount_type: "dollar_off", merchant_id: @merchant1.id)
+    @invoice_1.update(coupon: @coupon)
+
+    @invoice_1.reload
+
+    visit merchant_invoice_path(@merchant1, @invoice_1)
+    expect(page).to have_content("Grand Total: #{@invoice_1.grand_total}")
+  end
 end
