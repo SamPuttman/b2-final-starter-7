@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Coupon, type: :model do
   describe "relationships" do
     it { should belong_to :merchant }
+    it { should have_many :invoices }
   end
 
   describe "coupon_limit_validation" do
@@ -40,5 +41,17 @@ RSpec.describe Coupon, type: :model do
       expect(@coupon.active?).to be true
     end
 
+    it "won't update status if there is a pending invoice" do
+      @merchant1 = Merchant.create!(name: 'Hair Care')
+      @customer_1 = Customer.create!(first_name: 'Joey', last_name: 'Smith')
+      @invoice_1 = Invoice.create!(customer_id: @customer_1.id, status: 1, created_at: "2012-03-27 14:54:09")
+      
+      @coupon = Coupon.create!(name: "Discount", code: "OFF10", discount_value: 10, discount_type: "percent_off", merchant_id: @merchant1.id, status: "active")
+      @invoice_1.update(coupon: @coupon)
+
+      @coupon.update_status
+
+      expect(@coupon.status).to eq("active")
+    end
   end
 end
