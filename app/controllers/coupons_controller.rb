@@ -1,7 +1,8 @@
 class CouponsController < ApplicationController
   def index
     @merchant = Merchant.find(params[:merchant_id])
-    @coupons = @merchant.coupons
+    @active_coupons = @merchant.coupons.where(status: "active")
+    @inactive_coupons = @merchant.coupons.where(status: "inactive")
   end
 
   def new
