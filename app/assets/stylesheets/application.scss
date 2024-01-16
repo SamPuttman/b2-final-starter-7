@@ -71,10 +71,27 @@
    background-color: #7dca7d
 }
 
- .col-12 {
-    background-color: #EBEFF3;
-    font-weight: bold;
-    text-align: center;
-    margin-right: 80px;
-    margin-left: 10px
- }
+.col-12 {
+   background-color: #EBEFF3;
+   font-weight: bold;
+   text-align: center;
+   margin-right: 80px;
+   margin-left: 10px
+}
+
+.columns-container {
+display: flex; 
+justify-content: space-between; 
+padding: 20px; 
+}
+
+.column {
+flex: 1; 
+padding: 20px; 
+border: 2px solid #000000; 
+margin-left: 20px;
+}
+
+.column h2 {
+margin-top: 0;
+}
