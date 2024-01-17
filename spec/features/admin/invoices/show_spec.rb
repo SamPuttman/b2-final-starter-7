@@ -69,4 +69,67 @@ describe "Admin Invoices Index Page" do
       expect(@i1.status).to eq("completed")
     end
   end
+
+  describe "admin invoice totals" do
+    before do
+      @merchant1 = Merchant.create!(name: "Hair Care")
+      @customer_1 = Customer.create!(first_name: 'Joey', last_name: 'Smith')
+      @invoice_1 = Invoice.create!(customer_id: @customer_1.id, status: 2, created_at: "2012-03-27 14:54:09")
+      @coupon = Coupon.create!(name: "10 Dollars Off", code: "10FF", discount_value: 10, discount_type: "dollar_off", merchant_id: @merchant1.id)
+    end
+
+    it "shows the subtotal" do
+      visit admin_invoice_path(@invoice_1)
+
+      expect(page).to have_content("Subtotal: #{@invoice_1.total_revenue}")
+    end
+
+    it "shows the grand total" do
+      @invoice_1.update(coupon: @coupon)
+
+      @invoice_1.reload
+
+      visit admin_invoice_path(@invoice_1)
+      expect(page).to have_content("Grand Total: #{@invoice_1.grand_total}")
+    end
+
+    it "displays the coupon name as a link" do
+      @invoice_1.update(coupon: @coupon)
+
+      @invoice_1.reload
+
+      visit admin_invoice_path(@invoice_1)
+      expect(page).to have_content("#{@coupon.name}")
+      expect(page).to have_content("#{@coupon.code}")
+    end
+  end
+
+  describe "admin invoice total sad paths" do
+    before :each do
+      @merchant1 = Merchant.create!(name: "Hair Care")
+      @merchant2 = Merchant.create!(name: "Jewelry")
+
+      @item_1 = Item.create!(name: "Shampoo", description: "This washes your hair", unit_price: 100, merchant_id: @merchant1.id)
+      @item_2 = Item.create!(name: "Conditioner", description: "This makes your hair shiny", unit_price: 200, merchant_id: @merchant2.id,)
+      
+      @customer_1 = Customer.create!(first_name: "Joey", last_name: "Smith")
+      @invoice_1 = Invoice.create!(customer_id: @customer_1.id, status: 2, created_at: "2012-03-27 14:54:09")
+
+      @ii_1 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_1.id, quantity: 2, unit_price: @item_1.unit_price, status: 2)
+      @ii_2 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_2.id, quantity: 1, unit_price: @item_2.unit_price, status: 2)
+
+      @coupon = Coupon.create!(name: "10 Percent Off", code: "10FF", discount_value: 10, discount_type: "percent_off", merchant_id: @merchant1.id)
+      @invoice_1.update(coupon: @coupon)
+    end
+
+    it "applies coupon discount only to items from the same merchant" do
+      expected_subtotal = 400 
+      expected_discount = 20 
+      expected_grand_total = expected_subtotal - expected_discount
+  
+      expect(@invoice_1.total_revenue).to eq(expected_subtotal)
+      expect(@invoice_1.discount_amount).to eq(expected_discount)
+      expect(@invoice_1.grand_total).to eq(expected_grand_total)
+    end
+  end
 end
