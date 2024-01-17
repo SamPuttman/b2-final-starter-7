@@ -17,20 +17,28 @@ class Invoice < ApplicationRecord
 
   def grand_total
     if coupon
-      total_revenue - applied_discount
+      total_revenue - discount_amount
     else
       total_revenue
     end
   end
 
+  def discount_amount
+    return 0 unless coupon
+    coupon_items_total = invoice_items.joins(:item)
+                                      .where(items: { merchant_id: coupon.merchant_id })
+                                      .sum("invoice_items.quantity * invoice_items.unit_price")
+
+    calculate_discount(coupon_items_total)
+  end
   private
 
   def applied_discount
     return 0 unless coupon
 
-    if coupon.discount_type == 'percent_off'
+    if coupon.discount_type == "percent_off"
       calculate_percentage_discount
-    else coupon.discount_type == 'dollar_off'
+    else coupon.discount_type == "dollar_off"
       calculate_fixed_discount
     end
   end
@@ -41,6 +49,14 @@ class Invoice < ApplicationRecord
 
   def calculate_fixed_discount
     [coupon.discount_value, total_revenue].min
+  end
+
+  def calculate_discount(eligible_total)
+    if coupon.discount_type == "percent_off"
+      eligible_total * (coupon.discount_value.to_f / 100)
+    else coupon.discount_type == "dollar_off"
+      [coupon.discount_value, eligible_total].min
+    end
   end
 end
 
